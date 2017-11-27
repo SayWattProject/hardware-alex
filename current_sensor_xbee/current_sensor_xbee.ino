@@ -9,7 +9,7 @@ SoftwareSerial mySerial(10, 11); // RX, TX
 
 void setup() {  
   Serial.begin(9600);
-  emon1.current(5, 20);             // Current: input pin, calibration.
+  emon1.current(4, 20);             // Current: input pin, calibration.
 
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
