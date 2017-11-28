@@ -9,7 +9,7 @@ base = 'http://13.92.90.127:8000'
 network_id = 'local'
 header = {}
 
-serial_port_name = '/dev/cu.usbmodem1421'
+serial_port_name = '/dev/cu.usbmodem1411'
 ser = serial.Serial(serial_port_name, 9600, timeout=1)
 
 delay = 1*5 # Delay in seconds
@@ -65,18 +65,20 @@ def loop():
             # Read entire line 
             # (until '\n')
             x = ser.readline()
+            num, power = x.split(" ")
             print "Received:", x
             query = {
-                'points-value': float(x),
+                'points-value': float(power),
                 'points-at': datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
             }
-            endpoint = '/networks/'+network_id+'/objects/OBJ-CURR-SENSORS/streams/data-curr-sens-one/points'
+            letnum = {"1":"one", "2":"two", "3":"three"}
+            endpoint = '/networks/'+network_id+'/objects/OBJ-CURR-SENSORS/streams/data-curr-sens-' + letnum[num] + '/points'
             response = requests.request('POST', base + endpoint, params=query, headers=header, timeout=120 )
             resp = json.loads( response.text )
             if resp['points-code'] == 200:
-                print( 'Update temp-stream points: ok')
+                print( 'Update data-curr-sens-' + letnum[num] + ' points: ok')
             else:
-                print( 'Update temp-stream points: error')
+                print( 'Update data-curr-sens-' + letnum[num] + ' points: error')
                 print( response.text )
         except:
             print "Error"
@@ -109,7 +111,7 @@ def close():
 # Program Structure    
 def main():
     # Call setup function
-    setup()
+    # setup()
     # Set start time
     nextLoop = time.time()
     while(True):
